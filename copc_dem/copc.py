@@ -3,9 +3,9 @@ import pdal
 from pyproj import CRS
 
 from . import logs
-from .bounds import Bounds, MaxBounds 
+from .bounds import Bounds, MaxBounds
 
-import json 
+import json
 
 class COPC(object):
     def __init__(self, filename, bounds = None):
@@ -59,7 +59,7 @@ class COPC(object):
 
         if logs.logger.level < logs.logging.INFO:
             p.loglevel = logs.logger.level
-        info = json.loads(p.quickinfo)["readers.copc"]
+        info = p.quickinfo["readers.copc"]
 
         info['resolution'] = resolution
         if logs.logger.level < logs.logging.INFO:

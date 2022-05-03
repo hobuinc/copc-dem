@@ -7,6 +7,8 @@ from .logs import logger
 def doIt(args):
     logger.info(f"opening {args.copc_file} for processing")
     c = copc.COPC(args.copc_file)
+    if args.bounds:
+        c.bounds = args.bounds
 
 
     # 294477,5037224 : 302205,5043954

@@ -44,15 +44,17 @@ class Tile(object):
 
         name = uuid.uuid4()
         filename = f"{self.args.output_dir}/{self.args.output_type}-{name}.tif"
+        assign = pdal.Filter.assign(value="Intensity = Intensity / 256")
         writer = pdal.Writer.gdal(
             filename,
             bounds=str(self.bounds),
             data_type="float32",
+            dimension=f"{self.args.dimension}",
             output_type = self.args.output_type,
             resolution=self.args.write_resolution,
         )
         bounds = self.bounds.buffer(self.args.collar) 
-        p = self.copc.reader(bounds, self.args.read_resolution, self.args.collar ) | writer
+        p = self.copc.reader(bounds, self.args.read_resolution, self.args.collar ) | assign | writer
         return p
 
     def __str__(self):
