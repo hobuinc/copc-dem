@@ -1,8 +1,9 @@
-from .bounds import Bounds 
+from .bounds import Bounds
 from .copc import COPC
 from .logs import logger
 
 import pdal
+import json
 import uuid
 
 class Tile(object):
@@ -37,25 +38,47 @@ class Tile(object):
                 t = Tile(self.copc.filename, b, count, args=self.args)
                 t.last_count = count
 
-                yield t.split(threshold) 
+                yield t.split(threshold)
 
-    
+    def get_filter_stages(self, reader):
+        if self.args.filters:
+            with open(self.args.filters,'r') as f:
+                j = json.loads(f.read())
+                stages = pdal.pipeline._parse_stages(json.dumps(j))
+                return pdal.Pipeline(stages)
+
+        else:
+            return None
+
     def pipeline(self):
 
         name = uuid.uuid4()
         filename = f"{self.args.output_dir}/{self.args.output_type}-{name}.tif"
-        assign = pdal.Filter.assign(value="Intensity = Intensity / 256")
+        print (filename)
+
+        bounds = self.bounds.buffer(self.args.collar)
+        reader = self.copc.reader(bounds, self.args.read_resolution, self.args.collar )
+        stage = None
+        stage = self.get_filter_stages(reader)
+
+#        assign = pdal.Filter.assign(value="Intensity = Intensity / 256")
         writer = pdal.Writer.gdal(
             filename,
             bounds=str(self.bounds),
-            data_type="float32",
-            dimension=f"{self.args.dimension}",
+            data_type=self.args.raster_type,
+            dimension=self.args.dimension,
             output_type = self.args.output_type,
             resolution=self.args.write_resolution,
         )
-        bounds = self.bounds.buffer(self.args.collar) 
-        p = self.copc.reader(bounds, self.args.read_resolution, self.args.collar ) | assign | writer
-        return p
+        if stage:
+            stage = reader | stage | writer
+        else:
+            stage = reader | writer
+
+#         f = open('p.json','wb')
+#         f.write(stage.pipeline.encode('utf-8'))
+#         f.close()
+        return stage
 
     def __str__(self):
         return f'{self.bounds} - {self.copc.filename} - {self.last_count}'

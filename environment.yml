@@ -4,18 +4,5 @@ channels:
 dependencies:
   - dask
   - python=3.9
-  - pyproj
-  - libxml2[version='>=2.9.12,<2.10.0a0']
   - pdal
-  - curl[version='>=7.81.0,<8.0a0']
-  - eigen
-  - laszip
-  - laz-perf
-  - nitro
-  - tiledb[version='>=2.6.0,<2.7.0a0']
-  - libkml[version='>=1.3.0,<1.4.0a0']
-  - geotiff[version='>=1.7.0,<1.7.1.0a0']
-  - hdf5[version='>=1.12.1,<1.12.2.0a0']
-  - libgdal[version='>=3.4.1,<3.5.0a0']
-  - draco
-  - libpq[version='>=14.1,<15.0a0']
+  - pyproj

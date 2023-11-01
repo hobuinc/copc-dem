@@ -34,10 +34,14 @@ def get_parser(args):
                         help='Dimension name to write', type =str, default='Z')
     parser.add_argument('--output_type',
                         help='Output type, ie idw, max, min, etc', type =str, default='idw')
+    parser.add_argument('--raster_type',
+                        help='Raster output data type (float32, int32, etc)', type =str, default='float32')
     parser.add_argument('--window_size',
                         help='writers.gdal window_size', type =int, default=3)
     parser.add_argument('--bounds',
                         help='Limiting bounds', type =bounds_type, default=None)
+    parser.add_argument('--filters',
+                        help='Filter stages', type =str, default=None)
     parser.add_argument('--debug',
                         action='store_true',
                         help='print debug messages to stderr')
